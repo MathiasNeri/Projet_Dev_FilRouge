@@ -1,0 +1,38 @@
+tournament-platform/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── models/
+│   │   │   ├── user.py
+│   │   │   ├── tournament.py
+│   │   │   └── notification.py
+│   │   ├── routes/
+│   │   │   ├── auth.py
+│   │   │   └── tournaments.py
+│   │   └── services/
+│   │       └── notification_service.py
+│   ├── config.py
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   │   ├── layout/
+    │   │   │   └── Navbar.tsx
+    │   │   └── tournaments/
+    │   │       ├── TournamentList.tsx
+    │   │       └── CreateTournament.tsx
+    │   ├── pages/
+    │   │   ├── auth/
+    │   │   │   ├── Login.tsx
+    │   │   │   └── Register.tsx
+    │   │   ├── tournaments/
+    │   │   │   ├── TournamentList.tsx
+    │   │   │   └── TournamentDetails.tsx
+    │   │   ├── profile/
+    │   │   │   └── Profile.tsx
+    │   │   └── notifications/
+    │   │       └── Notifications.tsx
+    │   ├── contexts/
+    │   │   └── AuthContext.tsx
+    │   └── App.tsx
+    └── package.json 
