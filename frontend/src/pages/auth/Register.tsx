@@ -19,30 +19,19 @@ const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting registration with:', { username, email });
       await register(username, email, password);
-      console.log('Registration successful');
       navigate('/');
     } catch (err) {
-      console.error('Registration error details:', err);
       if (axios.isAxiosError(err)) {
         if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error('Error response:', err.response.data);
-          setError(err.response.data.message || 'Registration failed. Please try again.');
+          setError(err.response.data.message || "L'inscription a échoué. Veuillez réessayer.");
         } else if (err.request) {
-          // The request was made but no response was received
-          console.error('No response received:', err.request);
-          setError('No response from server. Please check if the server is running.');
+          setError("Pas de réponse du serveur. Veuillez vérifier que le serveur fonctionne.");
         } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error setting up request:', err.message);
-          setError('Error setting up request. Please try again.');
+          setError("Erreur lors de la requête. Veuillez réessayer.");
         }
       } else {
-        console.error('Non-axios error:', err);
-        setError('An unexpected error occurred. Please try again.');
+        setError("Une erreur inattendue est survenue. Veuillez réessayer.");
       }
     } finally {
       setLoading(false);
@@ -50,65 +39,89 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Register
-        </Typography>
-        {error && (
-          <Typography color="error" align="center" gutterBottom>
-            {error}
+    <Box sx={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #181926 0%, #232946 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      py: { xs: 2, sm: 6 },
+      px: { xs: 1, sm: 0 },
+    }}>
+      <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Paper elevation={8} sx={{
+          p: { xs: 2, sm: 4 },
+          mt: { xs: 2, sm: 8 },
+          background: 'rgba(35,41,70,0.97)',
+          borderRadius: 4,
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)',
+          width: '100%',
+          maxWidth: 500,
+        }}>
+          <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: 24, sm: 32 } }}>
+            Inscription
           </Typography>
-        )}
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            margin="normal"
-            required
-            disabled={loading}
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            margin="normal"
-            required
-            disabled={loading}
-          />
-          <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            margin="normal"
-            required
-            disabled={loading}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ mt: 3 }}
-            disabled={loading}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </Button>
-        </form>
-        <Box sx={{ mt: 2, textAlign: 'center' }}>
-          <Link component={RouterLink} to="/login">
-            Already have an account? Login here
-          </Link>
-        </Box>
-      </Paper>
-    </Container>
+          {error && (
+            <Typography color="error" align="center" gutterBottom sx={{ color: '#e57373', fontSize: { xs: 14, sm: 16 } }}>
+              {error}
+            </Typography>
+          )}
+          <form onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              label="Nom d'utilisateur"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              margin="normal"
+              required
+              disabled={loading}
+              InputLabelProps={{ style: { color: '#b8c1ec', fontSize: 15 } }}
+              InputProps={{ style: { color: '#fff', fontSize: 16 } }}
+            />
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              margin="normal"
+              required
+              disabled={loading}
+              InputLabelProps={{ style: { color: '#b8c1ec', fontSize: 15 } }}
+              InputProps={{ style: { color: '#fff', fontSize: 16 } }}
+            />
+            <TextField
+              fullWidth
+              label="Mot de passe"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              margin="normal"
+              required
+              disabled={loading}
+              InputLabelProps={{ style: { color: '#b8c1ec', fontSize: 15 } }}
+              InputProps={{ style: { color: '#fff', fontSize: 16 } }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ mt: 3, background: 'linear-gradient(90deg, #3a86ff 60%, #43a047 100%)', color: '#fff', fontWeight: 700, borderRadius: 3, boxShadow: '0 2px 8px rgba(58,134,255,0.10)', fontSize: { xs: 16, sm: 18 }, '&:hover': { background: 'linear-gradient(90deg, #265d97 60%, #388e3c 100%)' } }}
+              disabled={loading}
+            >
+              {loading ? 'Inscription en cours...' : "S'inscrire"}
+            </Button>
+          </form>
+          <Box sx={{ mt: 2, textAlign: 'center' }}>
+            <Link component={RouterLink} to="/login" sx={{ color: '#b8c1ec', fontWeight: 600, fontSize: { xs: 14, sm: 16 } }}>
+              Déjà un compte ? Connectez-vous ici
+            </Link>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

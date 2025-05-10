@@ -19,8 +19,6 @@ const CreateTournament: React.FC = () => {
     description: '',
     game_type: '',
     max_participants: 16,
-    start_date: '',
-    end_date: '',
     format: 'single_elimination',
   });
 
@@ -35,15 +33,11 @@ const CreateTournament: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Conversion des dates au format ISO 8601
       const payload = {
         ...formData,
-        start_date: formData.start_date ? new Date(formData.start_date).toISOString() : '',
-        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : '',
         format: formData.format.toLowerCase().replace(' ', '_'),
         max_participants: Number(formData.max_participants),
       };
-      console.log('Payload envoyé:', payload); // DEBUG
       await axios.post(
         'http://localhost:5000/tournaments',
         payload,
@@ -60,26 +54,41 @@ const CreateTournament: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Create Tournament
-        </Typography>
-
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+    <Box sx={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #181926 0%, #232946 100%)',
+      py: 6,
+    }}>
+      <Container maxWidth="sm">
+        <Paper elevation={12} sx={{
+          p: 5,
+          background: '#f3f4f8',
+          borderRadius: 6,
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.25)',
+        }}>
+          <Typography variant="h3" component="h1" gutterBottom sx={{ color: '#1a237e', fontWeight: 900, mb: 3, letterSpacing: 1 }}>
+            Créer un Tournoi
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <TextField
                 fullWidth
-                label="Tournament Name"
+                label="Nom du Tournoi"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
+                sx={{
+                  background: '#f3f4f8',
+                  color: '#222',
+                  borderRadius: 3,
+                  border: '1.5px solid #3a86ff',
+                  fontSize: 17,
+                  mb: 1,
+                }}
+                InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+                InputProps={{ style: { background: '#f3f4f8' } }}
               />
-            </Grid>
-
-            <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Description"
@@ -89,60 +98,59 @@ const CreateTournament: React.FC = () => {
                 multiline
                 rows={4}
                 required
+                sx={{
+                  background: '#f3f4f8',
+                  color: '#222',
+                  borderRadius: 3,
+                  border: '1.5px solid #3a86ff',
+                  fontSize: 17,
+                  mb: 1,
+                }}
+                InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+                InputProps={{ style: { background: '#f3f4f8' } }}
               />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Game Type"
+                label="Type de Jeu"
                 name="game_type"
                 value={formData.game_type}
                 onChange={handleChange}
                 required
+                sx={{
+                  background: '#f3f4f8',
+                  color: '#222',
+                  borderRadius: 3,
+                  border: '1.5px solid #3a86ff',
+                  fontSize: 17,
+                  mb: 1,
+                }}
+                InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+                InputProps={{ style: { background: '#f3f4f8' } }}
               />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
               <TextField
+                select
                 fullWidth
-                label="Max Participants"
+                label="Nombre de Participants"
                 name="max_participants"
-                type="number"
                 value={formData.max_participants}
                 onChange={handleChange}
                 required
-                inputProps={{ min: 2, max: 128 }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Start Date"
-                name="start_date"
-                type="datetime-local"
-                value={formData.start_date}
-                onChange={handleChange}
-                required
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="End Date"
-                name="end_date"
-                type="datetime-local"
-                value={formData.end_date}
-                onChange={handleChange}
-                required
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
+                sx={{
+                  background: '#f3f4f8',
+                  color: '#222',
+                  borderRadius: 3,
+                  border: '1.5px solid #3a86ff',
+                  fontSize: 17,
+                  mb: 1,
+                }}
+                InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+                InputProps={{ style: { background: '#f3f4f8' } }}
+                helperText="Seules les puissances de 2 sont autorisées pour garantir un bracket équilibré."
+              >
+                {[2, 4, 8, 16, 32, 64].map((val) => (
+                  <MenuItem key={val} value={val}>{val} participants</MenuItem>
+                ))}
+              </TextField>
               <TextField
                 fullWidth
                 select
@@ -151,34 +159,48 @@ const CreateTournament: React.FC = () => {
                 value={formData.format}
                 onChange={handleChange}
                 required
+                sx={{
+                  background: '#f3f4f8',
+                  color: '#222',
+                  borderRadius: 3,
+                  border: '1.5px solid #3a86ff',
+                  fontSize: 17,
+                  mb: 2,
+                }}
+                InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+                InputProps={{ style: { background: '#f3f4f8' } }}
               >
                 <MenuItem value="single_elimination">Single Elimination</MenuItem>
                 <MenuItem value="double_elimination">Double Elimination</MenuItem>
-                <MenuItem value="round_robin">Round Robin</MenuItem>
               </TextField>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate('/tournaments')}
-                >
-                  Cancel
-                </Button>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
+                  sx={{
+                    borderRadius: 4,
+                    px: 5,
+                    py: 1.7,
+                    fontWeight: 800,
+                    fontSize: 20,
+                    background: 'linear-gradient(90deg, #3a86ff 60%, #43a047 100%)',
+                    color: '#fff',
+                    boxShadow: '0 2px 8px rgba(58,134,255,0.13)',
+                    letterSpacing: 1,
+                    '&:hover': {
+                      background: 'linear-gradient(90deg, #265d97 60%, #388e3c 100%)',
+                    },
+                  }}
                 >
-                  Create Tournament
+                  Créer
                 </Button>
               </Box>
-            </Grid>
-          </Grid>
-        </form>
-      </Paper>
-    </Container>
+            </Box>
+          </form>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

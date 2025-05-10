@@ -3,7 +3,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.tournament import Tournament, TournamentParticipant
 from app.models.user import User
-from datetime import datetime
 
 bp = Blueprint('tournaments', __name__)
 
@@ -17,8 +16,6 @@ def get_tournaments():
         'game_type': t.game_type,
         'format': t.format,
         'status': t.status,
-        'start_date': t.start_date.isoformat() if t.start_date else None,
-        'end_date': t.end_date.isoformat() if t.end_date else None,
         'creator_id': t.creator_id,
         'participant_count': t.participants.count()
     } for t in tournaments])
@@ -26,39 +23,24 @@ def get_tournaments():
 @bp.route('/tournaments', methods=['POST'])
 @jwt_required()
 def create_tournament():
-    print(">>> Route /tournaments POST appelée")  # DEBUG
     data = request.get_json()
-    print('Données reçues pour création tournoi :', data)  # DEBUG
-    if data is None:
-        print("Aucun JSON reçu ou JSON invalide")
-    required_fields = ['name', 'description', 'game_type', 'max_participants', 'start_date', 'end_date', 'format']
+    required_fields = ['name', 'description', 'game_type', 'max_participants', 'format']
     for field in required_fields:
         if field not in data:
-            print(f"Champ manquant : {field}")
+            return jsonify({'error': f'Missing field: {field}'}), 400
     current_user_id = get_jwt_identity()
-    print("User ID JWT :", current_user_id)  # DEBUG
-    # Parse les dates si elles sont des chaînes
-    start_date = data['start_date']
-    end_date = data['end_date']
-    if isinstance(start_date, str):
-        start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
-    if isinstance(end_date, str):
-        end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
     try:
         tournament = Tournament(
             name=data['name'],
             description=data['description'],
             game_type=data['game_type'],
             max_participants=data['max_participants'],
-            start_date=start_date,
-            end_date=end_date,
             format=data['format'],
             creator_id=current_user_id
         )
         db.session.add(tournament)
         db.session.commit()
     except Exception as e:
-        print('Erreur SQLAlchemy :', e)
         return jsonify({'error': str(e)}), 422
     return jsonify({'message': 'Tournament created successfully', 'id': tournament.id}), 201
 
@@ -94,10 +76,10 @@ def get_tournament(tournament_id):
         {
             'id': p.id,
             'user_id': p.user_id,
-            'username': p.user.username if hasattr(p, 'user') and p.user else None,
-            'email': p.user.email if hasattr(p, 'user') and p.user else None,
-            'status': p.status,
-            'joined_at': p.joined_at.isoformat() if hasattr(p, 'joined_at') and p.joined_at else None
+            'username': p.user.username if p.user_id and hasattr(p, 'user') and p.user else p.guest_name,
+            'email': p.user.email if p.user_id and hasattr(p, 'user') and p.user else None,
+            'guest_name': p.guest_name,
+            'status': p.status
         }
         for p in tournament.participants
     ]
@@ -110,9 +92,7 @@ def get_tournament(tournament_id):
             'score1': m.score1,
             'score2': m.score2,
             'winner_id': m.winner_id,
-            'status': m.status,
-            'scheduled_time': m.scheduled_time.isoformat() if m.scheduled_time else None,
-            'created_at': m.created_at.isoformat() if hasattr(m, 'created_at') and m.created_at else None
+            'status': m.status
         }
         for m in tournament.matches
     ]
@@ -123,8 +103,6 @@ def get_tournament(tournament_id):
         'game_type': tournament.game_type,
         'format': tournament.format,
         'status': tournament.status,
-        'start_date': tournament.start_date.isoformat() if tournament.start_date else None,
-        'end_date': tournament.end_date.isoformat() if tournament.end_date else None,
         'creator_id': tournament.creator_id,
         'max_participants': tournament.max_participants,
         'participants': participants,
@@ -139,7 +117,7 @@ def update_tournament(tournament_id):
     if str(tournament.creator_id) != current_user_id:
         return jsonify({'error': 'Only the creator can modify this tournament'}), 403
     data = request.get_json()
-    for field in ['name', 'description', 'game_type', 'max_participants', 'start_date', 'end_date', 'format', 'status']:
+    for field in ['name', 'description', 'game_type', 'max_participants', 'format', 'status']:
         if field in data:
             setattr(tournament, field, data[field])
     db.session.commit()
@@ -165,18 +143,29 @@ def add_participant(tournament_id):
         return jsonify({'error': 'Only the creator can add participants'}), 403
     data = request.get_json()
     email = data.get('email')
-    if not email:
-        return jsonify({'error': 'email is required'}), 400
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-    if TournamentParticipant.query.filter_by(tournament_id=tournament_id, user_id=user.id).first():
-        return jsonify({'error': 'User already a participant or has a pending request'}), 400
-    participant = TournamentParticipant(
-        tournament_id=tournament_id,
-        user_id=user.id,
-        status='accepted'
-    )
+    guest_name = data.get('guest_name')
+    if not email and not guest_name:
+        return jsonify({'error': 'email or guest_name is required'}), 400
+    if email:
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        if TournamentParticipant.query.filter_by(tournament_id=tournament_id, user_id=user.id).first():
+            return jsonify({'error': 'User already a participant or has a pending request'}), 400
+        participant = TournamentParticipant(
+            tournament_id=tournament_id,
+            user_id=user.id,
+            status='accepted'
+        )
+    else:
+        # Ajout d'un invité
+        if TournamentParticipant.query.filter_by(tournament_id=tournament_id, guest_name=guest_name).first():
+            return jsonify({'error': 'Guest already a participant'}), 400
+        participant = TournamentParticipant(
+            tournament_id=tournament_id,
+            guest_name=guest_name,
+            status='accepted'
+        )
     db.session.add(participant)
     db.session.commit()
     return jsonify({'message': 'Participant added successfully'})
@@ -186,8 +175,14 @@ def add_participant(tournament_id):
 def request_join(tournament_id):
     tournament = Tournament.query.get_or_404(tournament_id)
     current_user_id = get_jwt_identity()
-    if TournamentParticipant.query.filter_by(tournament_id=tournament_id, user_id=current_user_id).first():
-        return jsonify({'error': 'Already requested or already a participant'}), 400
+    existing = TournamentParticipant.query.filter_by(tournament_id=tournament_id, user_id=current_user_id).first()
+    if existing:
+        if existing.status == 'rejected':
+            existing.status = 'pending'
+            db.session.commit()
+            return jsonify({'message': 'Join request sent again'})
+        else:
+            return jsonify({'error': 'Already requested or already a participant'}), 400
     participant = TournamentParticipant(
         tournament_id=tournament_id,
         user_id=current_user_id,
@@ -227,8 +222,7 @@ def get_tournament_participants(tournament_id):
         {
             'id': p.id,
             'user_id': p.user_id,
-            'status': p.status,
-            'joined_at': p.joined_at.isoformat() if hasattr(p, 'joined_at') and p.joined_at else None
+            'status': p.status
         } for p in participants
     ])
 
@@ -245,9 +239,7 @@ def get_tournament_matches(tournament_id):
             'score1': m.score1,
             'score2': m.score2,
             'winner_id': m.winner_id,
-            'status': m.status,
-            'scheduled_time': m.scheduled_time.isoformat() if m.scheduled_time else None,
-            'created_at': m.created_at.isoformat() if hasattr(m, 'created_at') and m.created_at else None
+            'status': m.status
         } for m in matches
     ])
 
@@ -281,4 +273,36 @@ def kick_participant(tournament_id):
         return jsonify({'error': 'Creator cannot kick themselves'}), 400
     db.session.delete(participant)
     db.session.commit()
-    return jsonify({'message': 'Participant has been removed'}) 
+    return jsonify({'message': 'Participant has been removed'})
+
+@bp.route('/tournaments/<int:tournament_id>/bracket', methods=['GET'])
+def get_bracket(tournament_id):
+    tournament = Tournament.query.get_or_404(tournament_id)
+    return jsonify({'bracket': tournament.bracket})
+
+@bp.route('/tournaments/<int:tournament_id>/bracket', methods=['POST'])
+@jwt_required()
+def save_bracket(tournament_id):
+    tournament = Tournament.query.get_or_404(tournament_id)
+    current_user_id = get_jwt_identity()
+    if str(tournament.creator_id) != current_user_id:
+        return jsonify({'error': 'Only the creator can modify the bracket'}), 403
+    
+    data = request.get_json()
+    bracket = data.get('bracket')
+    
+    if bracket is None:
+        return jsonify({'error': 'No bracket data provided'}), 400
+    if isinstance(bracket, dict) and 'main' in bracket and 'loser' in bracket:
+        if not isinstance(bracket['main'], list) or not isinstance(bracket['loser'], list):
+            return jsonify({'error': 'Invalid bracket format for double elimination'}), 400
+    elif not isinstance(bracket, list):
+        return jsonify({'error': 'Invalid bracket format'}), 400
+    
+    try:
+        tournament.bracket = bracket
+        db.session.commit()
+        return jsonify({'message': 'Bracket saved successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Error saving bracket: {str(e)}'}), 500 

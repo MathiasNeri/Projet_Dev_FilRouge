@@ -1,6 +1,5 @@
 from app import db
 from app.models.notification import Notification
-from datetime import datetime
 
 class NotificationService:
     @staticmethod
@@ -9,8 +8,7 @@ class NotificationService:
             user_id=user_id,
             title=title,
             message=message,
-            type=type,
-            created_at=datetime.utcnow()
+            type=type
         )
         db.session.add(notification)
         db.session.commit()
@@ -34,6 +32,6 @@ class NotificationService:
                 NotificationService.create_notification(
                     player_id,
                     "Match Programmé",
-                    f"Votre prochain match est programmé pour {match.scheduled_time}",
+                    f"Votre prochain match est programmé.",
                     "match_scheduled"
                 ) 

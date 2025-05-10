@@ -76,17 +76,7 @@ const Notifications: React.FC = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={notification.message}
-                  secondary={
-                    <>
-                      <Typography component="span" variant="body2">
-                        {notification.message}
-                      </Typography>
-                      <br />
-                      <Typography component="span" variant="caption" color="textSecondary">
-                        {new Date(notification.created_at).toLocaleString()}
-                      </Typography>
-                    </>
-                  }
+                  secondary={null}
                 />
               </ListItem>
               <Divider />

@@ -73,9 +73,9 @@ const Profile: React.FC = () => {
           <Grid item xs={12} md={8}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={value} onChange={handleTabChange}>
+                <Tab label="Informations" />
                 <Tab label="Mes Tournois" />
-                <Tab label="Mes Matchs" />
-                <Tab label="Statistiques" />
+                <Tab label="Historique" />
               </Tabs>
             </Box>
             

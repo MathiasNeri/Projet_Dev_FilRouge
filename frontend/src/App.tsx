@@ -15,6 +15,8 @@ import TournamentList from './pages/tournaments/TournamentList';
 import TournamentDetails from './pages/tournaments/TournamentDetails';
 import CreateTournament from './pages/tournaments/CreateTournament';
 import PrivateRoute from './components/PrivateRoute';
+import TournamentBracketManager from './pages/tournaments/TournamentBracketManager';
+import ViewBracket from './pages/tournaments/ViewBracket';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/tournaments" element={<TournamentList />} />
             <Route path="/tournaments/:id" element={<TournamentDetails />} />
+            <Route path="/tournaments/:id/manage-bracket" element={<TournamentBracketManager />} />
+            <Route path="/tournaments/:id/view-bracket" element={<ViewBracket />} />
             <Route
               path="/create-tournament"
               element={
