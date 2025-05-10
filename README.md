@@ -58,7 +58,6 @@ La base de données est structurée autour de 4 tables principales :
 - Un participant est lié à un utilisateur ou un invité (tournament_participant → user)
 - Un match relie deux joueurs (match → user)
 
-![Schéma de la base de données](chemin/vers/ton/image.png)
 
 ---
 
@@ -71,8 +70,7 @@ Une application web pour gérer tous types de tournois, développée avec React 
 - Python 3.8 ou supérieur
 - Node.js 16 ou supérieur
 - Git
-
-> Note : Le projet utilise SQLite par défaut, donc aucune base de données supplémentaire n'est nécessaire pour le lancer. PostgreSQL est une option alternative qui peut être configurée si nécessaire.
+- PostgreSQL (pour la base de données)
 
 ## Installation
 
@@ -91,7 +89,25 @@ cd backend
 pip install -r requirements.txt
 ```
 
-2. Initialiser la base de données :
+2. Créer un fichier `.env` dans le dossier `backend` avec les variables suivantes :
+```env
+FLASK_APP=wsgi.py
+FLASK_ENV=development
+DATABASE_URL=postgresql://username:password@localhost:5432/app
+JWT_SECRET_KEY=votre_secret_key_ici
+```
+
+Remplacez :
+- `username` et `password` par vos identifiants PostgreSQL
+- `votre_secret_key_ici` par une chaîne de caractères aléatoire sécurisée
+
+3. Créer la base de données PostgreSQL :
+```bash
+# Dans psql ou pgAdmin
+CREATE DATABASE app;
+```
+
+4. Initialiser la base de données :
 ```bash
 flask db upgrade
 ```
@@ -102,6 +118,11 @@ flask db upgrade
 ```bash
 cd frontend
 npm install
+```
+
+2. Créer un fichier `.env` dans le dossier `frontend` avec :
+```env
+REACT_APP_API_URL=http://localhost:5000
 ```
 
 ## Lancement de l'application
