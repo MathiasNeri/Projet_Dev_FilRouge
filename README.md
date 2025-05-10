@@ -83,33 +83,34 @@ cd Projet_Dev_FilRouge
 
 ### 2. Configuration du Backend
 
-1. Installer les dépendances Python :
+1. Créer un environnement virtuel :
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
+
+2. Installer les dépendances :
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-2. Créer un fichier `.env` dans le dossier `backend` avec les variables suivantes :
-```env
-FLASK_APP=wsgi.py
-FLASK_ENV=development
-DATABASE_URL=postgresql://username:password@localhost:5432/app
-JWT_SECRET_KEY=votre_secret_key_ici
-```
+3. Configuration de la base de données :
+   - Assurez-vous que PostgreSQL est installé et en cours d'exécution
+   - Créez un fichier `.env` dans le dossier `backend` avec :
+   ```
+   SECRET_KEY=votre_secret_key_ici
+   JWT_SECRET_KEY=votre_secret_key_ici
+   ```
+   - Initialisez la base de données :
+   ```bash
+   python init_db.py
+   ```
 
-Remplacez :
-- `username` et `password` par vos identifiants PostgreSQL
-- `votre_secret_key_ici` par une chaîne de caractères aléatoire sécurisée
-
-3. Créer la base de données PostgreSQL :
+4. Lancer le serveur :
 ```bash
-# Dans psql ou pgAdmin
-CREATE DATABASE app;
-```
-
-4. Initialiser la base de données :
-```bash
-flask db upgrade
+python wsgi.py
 ```
 
 ### 3. Configuration du Frontend
@@ -120,10 +121,12 @@ cd frontend
 npm install
 ```
 
-2. Créer un fichier `.env` dans le dossier `frontend` avec :
+2. Créer un fichier `.env` dans le dossier `frontend` avec la variable suivante :
 ```env
 REACT_APP_API_URL=http://localhost:5000
 ```
+
+⚠️ **Note** : Si vous déployez l'application en production, changez cette URL pour pointer vers votre serveur backend.
 
 ## Lancement de l'application
 
@@ -168,24 +171,21 @@ L'application frontend sera accessible sur `http://localhost:3000`
 
 ## Structure du Projet
 
-```
-Projet_Dev_FilRouge/
-├── backend/
-│   ├── app/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   └── services/
-│   ├── migrations/
-│   └── requirements.txt
-└── frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/
-    │   ├── contexts/
-    │   ├── pages/
-    │   └── services/
-    └── package.json
-```
+### Backend
+- `app/` : Code source principal
+  - `models/` : Modèles de données
+  - `routes/` : Routes API
+  - `__init__.py` : Configuration de l'application
+- `config.py` : Configuration globale
+- `wsgi.py` : Point d'entrée
+- `init_db.py` : Script d'initialisation de la base de données
+
+### Frontend
+- `src/` : Code source React
+  - `components/` : Composants réutilisables
+  - `pages/` : Pages de l'application
+  - `contexts/` : Contextes React (auth, etc.)
+  - `config.ts` : Configuration
 
 ## Fonctionnalités
 

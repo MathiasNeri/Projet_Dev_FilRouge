@@ -1,38 +1,46 @@
-tournament-platform/
+Projet_Dev_FilRouge/
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py
 │   │   ├── models/
 │   │   │   ├── user.py
-│   │   │   ├── tournament.py
-│   │   │   └── notification.py
-│   │   ├── routes/
-│   │   │   ├── auth.py
-│   │   │   └── tournaments.py
-│   │   └── services/
-│   │       └── notification_service.py
+│   │   │   └── tournament.py
+│   │   └── routes/
+│   │       ├── auth.py
+│   │       └── tournaments.py
 │   ├── config.py
+│   ├── wsgi.py
+│   ├── init_db.py
+│   ├── .env
 │   └── requirements.txt
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   ├── layout/
-    │   │   │   └── Navbar.tsx
-    │   │   └── tournaments/
-    │   │       ├── TournamentList.tsx
-    │   │       └── CreateTournament.tsx
-    │   ├── pages/
-    │   │   ├── auth/
-    │   │   │   ├── Login.tsx
-    │   │   │   └── Register.tsx
-    │   │   ├── tournaments/
-    │   │   │   ├── TournamentList.tsx
-    │   │   │   └── TournamentDetails.tsx
-    │   │   ├── profile/
-    │   │   │   └── Profile.tsx
-    │   │   └── notifications/
-    │   │       └── Notifications.tsx
-    │   ├── contexts/
-    │   │   └── AuthContext.tsx
-    │   └── App.tsx
-    └── package.json 
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   │   ├── Navbar.tsx
+│   │   │   │   └── Footer.tsx
+│   │   │   └── tournaments/
+│   │   │       ├── TournamentList.tsx
+│   │   │       ├── TournamentCard.tsx
+│   │   │       └── CreateTournament.tsx
+│   │   ├── pages/
+│   │   │   ├── auth/
+│   │   │   │   ├── Login.tsx
+│   │   │   │   └── Register.tsx
+│   │   │   ├── tournaments/
+│   │   │   │   ├── TournamentList.tsx
+│   │   │   │   └── TournamentDetails.tsx
+│   │   │   └── profile/
+│   │   │       └── Profile.tsx
+│   │   ├── contexts/
+│   │   │   └── AuthContext.tsx
+│   │   ├── config.ts
+│   │   └── App.tsx
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── .env
+│   ├── package.json
+│   └── tsconfig.json
+├── .gitignore
+└── README.md 
