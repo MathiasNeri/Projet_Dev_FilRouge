@@ -61,42 +61,19 @@ La base de données est structurée autour de 4 tables principales :
 
 ---
 
-# Plateforme de Tournois
+# Projet Dev Fil Rouge
 
-Une application web pour gérer tous types de tournois, développée avec React (frontend) et Flask (backend).
+## Installation Initiale
 
-## Prérequis
+### Backend (Python/Flask)
 
-- Python 3.8 ou supérieur
-- Node.js 16 ou supérieur
-- Git
-- PostgreSQL (pour la base de données)
-
-## Installation
-
-### 1. Cloner le repository
-
-```bash
-git clone https://github.com/MathiasNeri/Projet_Dev_FilRouge.git
-cd Projet_Dev_FilRouge
-```
-
-### 2. Configuration du Backend
-
-1. Créer un environnement virtuel :
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
-
-2. Installer les dépendances :
+1. Installer les dépendances (une seule fois) :
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-3. Configuration de la base de données :
+2. Configuration de la base de données :
    - Assurez-vous que PostgreSQL est installé et en cours d'exécution
    - Créez un fichier `.env` dans le dossier `backend` avec :
    ```
@@ -108,66 +85,37 @@ pip install -r requirements.txt
    python init_db.py
    ```
 
-4. Lancer le serveur :
-```bash
-python wsgi.py
-```
+### Frontend (React)
 
-### 3. Configuration du Frontend
-
-1. Installer les dépendances Node.js :
+1. Installer les dépendances (une seule fois) :
 ```bash
 cd frontend
 npm install
 ```
 
-2. Créer un fichier `.env` dans le dossier `frontend` avec la variable suivante :
-```env
-REACT_APP_API_URL=http://localhost:5000
-```
+2. Configuration :
+   - Créez un fichier `.env` dans le dossier `frontend` avec :
+   ```
+   REACT_APP_API_URL=http://localhost:5000
+   ```
 
-⚠️ **Note** : Si vous déployez l'application en production, changez cette URL pour pointer vers votre serveur backend.
+## Démarrage Quotidien
 
-## Lancement de l'application
+1. Démarrer PostgreSQL
 
-### 1. Démarrer le Backend
-
-Dans le dossier `backend` :
+2. Lancer le backend :
 ```bash
+cd backend
 python wsgi.py
 ```
 
-Le serveur backend sera accessible sur `http://localhost:5000`
-
-### 2. Démarrer le Frontend
-
-Dans le dossier `frontend` :
+3. Lancer le frontend :
 ```bash
+cd frontend
 npm start
 ```
 
-L'application frontend sera accessible sur `http://localhost:3000`
-
-## Utilisation
-
-1. Créer un compte ou se connecter
-2. Créer un tournoi en spécifiant :
-   - Nom
-   - Description
-   - Type de jeu
-   - Format
-   - Dates de début et fin
-   - Nombre maximum de participants
-
-3. Gérer les participants :
-   - Accepter/refuser les demandes d'inscription
-   - Exclure des participants
-   - Voir la liste des participants
-
-4. Participer à un tournoi :
-   - Demander à rejoindre
-   - Voir les détails
-   - Quitter le tournoi
+L'application sera accessible à l'adresse : http://localhost:3000
 
 ## Structure du Projet
 
@@ -189,23 +137,6 @@ L'application frontend sera accessible sur `http://localhost:3000`
 
 ## Fonctionnalités
 
-- Authentification des utilisateurs
-- Création et gestion de tournois
-- Système de demande d'inscription
-- Gestion des participants
-- Interface utilisateur responsive
-- Notifications en temps réel
-
-## Technologies Utilisées
-
-- **Frontend** :
-  - React
-  - Material-UI
-  - Axios
-  - TypeScript
-
-- **Backend** :
-  - Flask
-  - SQLAlchemy
-  - Flask-JWT-Extended
-  - SQLite (base de données locale)
+- Authentification (inscription/connexion)
+- Gestion des tournois
+- Interface utilisateur moderne et responsive
