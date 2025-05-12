@@ -75,15 +75,19 @@ pip install -r requirements.txt
 
 2. Configuration de la base de données :
    - Assurez-vous que PostgreSQL est installé et en cours d'exécution
+   - **Sur Windows, ajoutez le chemin `C:\Program Files\PostgreSQL\[version]\bin` à la variable d'environnement PATH si la commande `psql` n'est pas reconnue.**
    - Créez un fichier `.env` dans le dossier `backend` avec :
    ```
    SECRET_KEY=votre_secret_key_ici
    JWT_SECRET_KEY=votre_secret_key_ici
+   DATABASE_URL=postgresql://postgres:root@localhost:5432/app
    ```
+   - Après modification du PATH, fermez et rouvrez votre terminal pour que les changements soient pris en compte.
    - Initialisez la base de données :
    ```bash
    python init_db.py
    ```
+   - Si la base de données existe déjà, le script affichera une erreur, ce n'est pas bloquant.
 
 ### Frontend (React)
 
@@ -117,26 +121,16 @@ npm start
 
 L'application sera accessible à l'adresse : http://localhost:3000
 
+---
+
+**Versions recommandées :**
+- Python ≥ 3.9
+- Node.js ≥ 18
+- PostgreSQL ≥ 13
+
+---
+
 ## Structure du Projet
 
 ### Backend
-- `app/` : Code source principal
-  - `models/` : Modèles de données
-  - `routes/` : Routes API
-  - `__init__.py` : Configuration de l'application
-- `config.py` : Configuration globale
-- `wsgi.py` : Point d'entrée
-- `init_db.py` : Script d'initialisation de la base de données
-
-### Frontend
-- `src/` : Code source React
-  - `components/` : Composants réutilisables
-  - `pages/` : Pages de l'application
-  - `contexts/` : Contextes React (auth, etc.)
-  - `config.ts` : Configuration
-
-## Fonctionnalités
-
-- Authentification (inscription/connexion)
-- Gestion des tournois
-- Interface utilisateur moderne et responsive
+- `
