@@ -34,8 +34,9 @@ pip install -r requirements.txt
    ```
    SECRET_KEY=votre_secret_key_ici
    JWT_SECRET_KEY=votre_secret_key_ici
-   DATABASE_URL=postgresql://postgres:root@localhost:5432/app
+   DATABASE_URL=postgresql://postgres:votre_mot_de_passe_postgres@localhost:5432/app
    ```
+   - Remplacez `votre_mot_de_passe_postgres` par le mot de passe que vous avez configuré lors de l'installation de PostgreSQL
    - Après modification du PATH, fermez et rouvrez votre terminal pour que les changements soient pris en compte.
    - Initialisez la base de données :
    ```bash
